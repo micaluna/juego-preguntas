@@ -446,8 +446,23 @@
             renderRankingTable(combined);
         }
 
-        function renderRankingTable(list) {
+       function renderRankingTable(list) {
             rankingTableBody.innerHTML = "";
+            
+            // 1. Convertir a números y ordenar estrictamente: mayor puntaje primero, menor tiempo en caso de empate
+            list.sort((a, b) => {
+                const ptsA = Number(a.puntaje) || 0;
+                const ptsB = Number(b.puntaje) || 0;
+                const tA = Number(a.tiempo) || 0;
+                const tB = Number(b.tiempo) || 0;
+
+                if (ptsB !== ptsA) {
+                    return ptsB - ptsA; // Mayor puntaje primero
+                }
+                return tA - tB; // A igual puntaje, menor tiempo primero
+            });
+
+            // 2. Renderizar los primeros 10
             list.slice(0, 10).forEach((item, idx) => {
                 const isCurrent = item.nombre === playerName;
                 const tr = document.createElement('tr');
