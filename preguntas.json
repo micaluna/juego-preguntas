@@ -1,0 +1,14 @@
+[
+  {
+    "pregunta": "¿El agua hierve a los 100 grados Celsius a presión normal?",
+    "respuesta": true
+  },
+  {
+    "pregunta": "Buenos Aires es la capital de Brasil.",
+    "respuesta": false
+  },
+  {
+    "pregunta": "JavaScript es un lenguaje de programación.",
+    "respuesta": true
+  }
+]
