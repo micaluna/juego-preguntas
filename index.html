@@ -7,9 +7,6 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Carga del archivo de preguntas externo -->
-    <script src="./preguntas.js"></script>
-
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -93,19 +90,19 @@
                 🚀
             </div>
             <div>
-                <h1 class="text-3xl sm:text-4xl font-cherry text-canvaDarkPurple tracking-wide mb-1">¡Desafío Espacial!</h1>
-                <p class="text-slate-800 font-penmanship text-lg sm:text-xl font-bold">Responde Verdadero o Falso antes de que se agote el tiempo.</p>
+                <h1 class="text-3xl sm:text-4xl font-cherry text-canvaDarkPurple tracking-wide mb-1">¡Space Challenge!</h1>
+                <p class="text-slate-800 font-penmanship text-lg sm:text-xl font-bold">Answer True or False before time runs out.</p>
             </div>
 
             <form id="startForm" class="w-full max-w-md space-y-4 pt-1">
                 <div class="text-left">
-                    <label class="block text-sm font-bold text-canvaDarkPurple mb-1 ml-1 font-penmanship text-base" for="username">Tu Nombre o Apodo:</label>
+                    <label class="block text-sm font-bold text-canvaDarkPurple mb-1 ml-1 font-penmanship text-base" for="username">Your Name or Nickname:</label>
                     <input 
                         type="text" 
                         id="username" 
                         required
                         maxlength="20"
-                        placeholder="Escribe tu nombre aquí..." 
+                        placeholder="Type your name here..." 
                         class="w-full px-5 py-3 rounded-2xl bg-white/90 border-2 border-canvaPurple/50 focus:border-canvaPurple focus:outline-none text-lg font-penmanship font-bold text-slate-800 shadow-inner transition"
                     />
                 </div>
@@ -113,7 +110,7 @@
                     type="button" 
                     onclick="startGame(event)"
                     class="w-full py-3.5 bg-canvaOrange hover:bg-orange-600 text-white font-cherry tracking-wide text-2xl rounded-2xl shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3 border-b-4 border-amber-800">
-                    <i class="fa-solid fa-play text-lg"></i> ¡Comenzar Misión!
+                    <i class="fa-solid fa-play text-lg"></i> ¡Start Mission!
                 </button>
             </form>
         </section>
@@ -122,7 +119,7 @@
         <section id="screenGame" class="hidden flex-col justify-between my-auto py-2 space-y-4">
             <div class="space-y-1.5">
                 <div class="flex justify-between items-center font-bold text-sm text-canvaDarkPurple font-penmanship text-base">
-                    <span id="questionCounter">Pregunta 1 de 5</span>
+                    <span id="questionCounter">Question 1 of 8</span>
                     <span class="text-amber-700 flex items-center gap-1 font-bold">
                         <i class="fa-solid fa-star text-amber-500"></i> <span id="currentScore">0</span> pts
                     </span>
@@ -133,14 +130,14 @@
                     <div id="timerBar" class="bg-canvaCyan h-full rounded-full timer-bar w-full"></div>
                 </div>
                 <div class="text-right text-xs text-slate-700 font-penmanship font-bold">
-                    Tiempo restante: <span id="timerText" class="text-canvaDarkPurple font-extrabold text-sm">12</span>s
+                    Time remaining: <span id="timerText" class="text-canvaDarkPurple font-extrabold text-sm">12</span>s
                 </div>
             </div>
 
             <!-- Círculo / Tarjeta Morada Central de Pregunta -->
             <div class="circle-badge-question rounded-3xl p-6 sm:p-8 text-center min-h-[160px] flex items-center justify-center relative shadow-md border-2 border-white/20">
                 <p id="questionText" class="text-xl sm:text-2xl font-penmanship font-bold text-white leading-snug drop-shadow-md">
-                    Cargando pregunta...
+                    Loading question...
                 </p>
             </div>
 
@@ -153,13 +150,13 @@
                     onclick="answerQuestion(true)" 
                     class="py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-cherry tracking-wider text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-emerald-800">
                     <i class="fa-solid fa-circle-check text-2xl"></i>
-                    <span>Verdadero</span>
+                    <span>True</span>
                 </button>
                 <button 
                     onclick="answerQuestion(false)" 
                     class="py-4 bg-rose-500 hover:bg-rose-600 text-white font-cherry tracking-wider text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-rose-800">
                     <i class="fa-solid fa-circle-xmark text-2xl"></i>
-                    <span>Falso</span>
+                    <span>False</span>
                 </button>
             </div>
         </section>
@@ -171,29 +168,29 @@
             </div>
 
             <div>
-                <h2 class="text-3xl font-cherry text-canvaDarkPurple mb-0">¡Misión Cumplida!</h2>
-                <p class="text-slate-800 font-penmanship text-base font-bold">Has completado la actividad con éxito</p>
+                <h2 class="text-3xl font-cherry text-canvaDarkPurple mb-0">Mission Accomplished!</h2>
+                <p class="text-slate-800 font-penmanship text-base font-bold">You have successfully completed the activity</p>
             </div>
 
             <div class="grid grid-cols-2 gap-3 w-full">
                 <div class="bg-white/90 p-2.5 rounded-2xl border border-canvaPurple/30 shadow-sm">
-                    <span class="block text-xs text-slate-500 font-penmanship uppercase font-bold">Puntaje Final</span>
+                    <span class="block text-xs text-slate-500 font-penmanship uppercase font-bold">Final Score</span>
                     <span id="finalScore" class="text-2xl font-cherry text-canvaPurple">0</span>
-                    <span class="text-xs text-slate-500 block font-penmanship font-bold">puntos</span>
+                    <span class="text-xs text-slate-500 block font-penmanship font-bold">points</span>
                 </div>
                 <div class="bg-white/90 p-2.5 rounded-2xl border border-canvaPurple/30 shadow-sm">
-                    <span class="block text-xs text-slate-500 font-penmanship uppercase font-bold">Tiempo Total</span>
+                    <span class="block text-xs text-slate-500 font-penmanship uppercase font-bold">Total Time</span>
                     <span id="finalTime" class="text-2xl font-cherry text-amber-600">0s</span>
-                    <span class="text-xs text-slate-500 block font-penmanship font-bold">segundos</span>
+                    <span class="text-xs text-slate-500 block font-penmanship font-bold">seconds</span>
                 </div>
             </div>
 
             <div class="w-full text-left bg-white/90 rounded-2xl p-3 border border-canvaPurple/30 shadow-sm">
                 <div class="flex justify-between items-center mb-1.5 pb-1 border-b border-slate-200">
                     <h3 class="font-cherry text-canvaDarkPurple text-base flex items-center gap-2">
-                        <i class="fa-solid fa-ranking-star text-canvaOrange"></i> Tabla de Posiciones
+                        <i class="fa-solid fa-ranking-star text-canvaOrange"></i> Leaderboard
                     </h3>
-                    <span id="syncStatus" class="text-xs text-slate-500 font-penmanship font-bold">Actualizado</span>
+                    <span id="syncStatus" class="text-xs text-slate-500 font-penmanship font-bold">Updated</span>
                 </div>
 
                 <div class="max-h-36 overflow-y-auto pr-1">
@@ -201,9 +198,9 @@
                         <thead>
                             <tr class="text-left text-xs text-slate-400 border-b border-slate-200">
                                 <th class="pb-1">#</th>
-                                <th class="pb-1">Nombre</th>
+                                <th class="pb-1">Name</th>
                                 <th class="pb-1 text-right">Pts</th>
-                                <th class="pb-1 text-right">Tiempo</th>
+                                <th class="pb-1 text-right">Time</th>
                             </tr>
                         </thead>
                         <tbody id="rankingTableBody"></tbody>
@@ -214,26 +211,62 @@
             <button 
                 onclick="resetGame()" 
                 class="w-full py-3 bg-canvaPurple hover:bg-purple-700 text-white font-cherry tracking-wide text-xl rounded-2xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2 border-b-4 border-indigo-900">
-                <i class="fa-solid fa-rotate-right"></i> Jugar de Nuevo
+                <i class="fa-solid fa-rotate-right"></i> Play Again
             </button>
         </section>
 
         <!-- Footer -->
         <footer class="pt-2 border-t border-dashed border-canvaDarkPurple/20 text-center text-xs text-canvaDarkPurple font-penmanship font-bold">
-            Actividad Didáctica Interactiva • Creado para el aula
+            Interactive Educational Activity • Created for the classroom
         </footer>
 
     </main>
 
-    <!-- SCRIPT DE LÓGICA DEL JUEGO -->
+    <!-- SCRIPT DE LÓGICA DEL JUEGO CON LAS 8 PREGUNTAS INCLUIDAS -->
     <script>
-        const QUESTIONS = (typeof preguntasJuego !== 'undefined' && Array.isArray(preguntasJuego))
-            ? preguntasJuego
-            : [
-                { pregunta: "El sol es la estrella más cercana a la Tierra.", respuesta: true, timeLimit: 12 },
-                { pregunta: "Los delfines son peces que respiran por agallas.", respuesta: false, timeLimit: 12 },
-                { pregunta: "El agua hierve a 100 grados Celsius a nivel del mar.", respuesta: true, timeLimit: 10 }
-            ];
+        // Preguntas integradas directamente para evitar problemas de carga externa en GitHub Pages
+        const QUESTIONS = [
+            {
+                pregunta: "Planet Earth is a small part of the universe.",
+                respuesta: true,
+                timeLimit: 12
+            },
+            {
+                pregunta: "In our solar system, there are eight planets.",
+                respuesta: true,
+                timeLimit: 12
+            },
+            {
+                pregunta: "The Sun is a cold planet.",
+                respuesta: false,
+                timeLimit: 12
+            },
+            {
+                pregunta: "Hot stars are blue and white, and cool stars are yellow, orange, and red.",
+                respuesta: true,
+                timeLimit: 15
+            },
+            {
+                pregunta: "The Moon produces its own light at night.",
+                respuesta: false,
+                timeLimit: 12
+            },
+            {
+                pregunta: "The Moon travels around Planet Earth every 27 days.",
+                respuesta: true,
+                timeLimit: 12
+            },
+            {
+                pregunta: "Planets travel around natural satellites like the Moon.",
+                respuesta: false,
+                timeLimit: 12
+            },
+            {
+                pregunta: "The universe contains millions of stars, planets, and galaxies.",
+                respuesta: true,
+                timeLimit: 12
+            }
+        ];
 
         let currentQuestionIndex = 0;
         let score = 0;
@@ -289,7 +322,7 @@
             const qText = q.pregunta || q.question || "";
             const limit = q.timeLimit || 12;
 
-            questionCounter.textContent = `Pregunta ${currentQuestionIndex + 1} de ${QUESTIONS.length}`;
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${QUESTIONS.length}`;
             currentScore.textContent = score;
             questionText.textContent = qText;
 
@@ -355,7 +388,7 @@
         function handleTimeOut() {
             const limit = QUESTIONS[currentQuestionIndex].timeLimit || 12;
             totalTimeSpent += limit;
-            showFeedback(false, "¡Tiempo agotado!");
+            showFeedback(false, "Time's up!");
             disableButtons(true);
 
             setTimeout(() => {
@@ -368,10 +401,10 @@
             feedbackBox.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
             if (isCorrect) {
                 feedbackBox.classList.add('bg-emerald-100', 'text-emerald-800');
-                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Correcto! +Puntos por rapidez`;
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Correct! +Speed bonus`;
             } else {
                 feedbackBox.classList.add('bg-rose-100', 'text-rose-800');
-                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ${customMsg || "¡Incorrecto!"}`;
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ${customMsg || "Incorrect!"}`;
             }
         }
 
@@ -406,7 +439,7 @@
             const userEntry = { nombre, puntaje, tiempo, current: true };
 
             if (GOOGLE_SHEETS_SCRIPT_URL && GOOGLE_SHEETS_SCRIPT_URL.startsWith("http")) {
-                document.getElementById('syncStatus').textContent = "Guardando...";
+                document.getElementById('syncStatus').textContent = "Saving...";
                 
                 fetch(GOOGLE_SHEETS_SCRIPT_URL, {
                     method: 'POST',
@@ -415,16 +448,16 @@
                     body: JSON.stringify({ nombre, puntaje, tiempo })
                 })
                 .then(() => {
-                    document.getElementById('syncStatus').textContent = "Sincronizado";
+                    document.getElementById('syncStatus').textContent = "Synced";
                     fetchRanking();
                 })
                 .catch(err => {
-                    console.error("Error enviando a Sheets:", err);
-                    document.getElementById('syncStatus').textContent = "Modo Local";
+                    console.error("Error sending to Sheets:", err);
+                    document.getElementById('syncStatus').textContent = "Local Mode";
                     renderRankingLocal(userEntry);
                 });
             } else {
-                document.getElementById('syncStatus').textContent = "Modo Demo";
+                document.getElementById('syncStatus').textContent = "Demo Mode";
                 renderRankingLocal(userEntry);
             }
         }
@@ -442,14 +475,13 @@
 
         function renderRankingLocal(currentUser) {
             let combined = [...mockRanking, currentUser];
-            combined.sort((a, b) => b.puntaje - a.puntaje || a.tiempo - b.tiempo);
             renderRankingTable(combined);
         }
 
-       function renderRankingTable(list) {
+        function renderRankingTable(list) {
             rankingTableBody.innerHTML = "";
             
-            // 1. Convertir a números y ordenar estrictamente: mayor puntaje primero, menor tiempo en caso de empate
+            // Ordenamiento estricto: mayor puntaje primero, menor tiempo en caso de empate
             list.sort((a, b) => {
                 const ptsA = Number(a.puntaje) || 0;
                 const ptsB = Number(b.puntaje) || 0;
@@ -462,7 +494,6 @@
                 return tA - tB; // A igual puntaje, menor tiempo primero
             });
 
-            // 2. Renderizar los primeros 10
             list.slice(0, 10).forEach((item, idx) => {
                 const isCurrent = item.nombre === playerName;
                 const tr = document.createElement('tr');
@@ -472,7 +503,7 @@
                 
                 tr.innerHTML = `
                     <td class="py-2 px-1">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}</td>
-                    <td class="py-2 px-1 truncate max-w-[120px]">${item.nombre} ${isCurrent ? '(Tú)' : ''}</td>
+                    <td class="py-2 px-1 truncate max-w-[120px]">${item.nombre} ${isCurrent ? '(You)' : ''}</td>
                     <td class="py-2 px-1 text-right font-bold">${item.puntaje}</td>
                     <td class="py-2 px-1 text-right text-slate-500 text-xs">${item.tiempo}s</td>
                 `;
