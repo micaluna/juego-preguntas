@@ -222,10 +222,9 @@
 
     </main>
 
-    <!-- SCRIPT DE LÓGICA DEL JUEGO CON LAS 8 PREGUNTAS INCLUIDAS -->
+    <!-- SCRIPT DE LÓGICA DEL JUEGO CON MEZCLA ALEATORIA (RANDOM) -->
     <script>
-        // Preguntas integradas directamente para evitar problemas de carga externa en GitHub Pages
-        const QUESTIONS = [
+        const originalQuestions = [
             {
                 pregunta: "Planet Earth is a small part of the universe.",
                 respuesta: true,
@@ -268,6 +267,7 @@
             }
         ];
 
+        let QUESTIONS = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let playerName = "";
@@ -294,6 +294,16 @@
         const feedbackBox = document.getElementById('feedbackBox');
         const rankingTableBody = document.getElementById('rankingTableBody');
 
+        // Función para mezclar un array de forma aleatoria (Algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
         function startGame(e) {
             if (e && e.preventDefault) e.preventDefault();
             const inputName = document.getElementById('username').value.trim();
@@ -302,6 +312,9 @@
             playerName = inputName;
             displayName.textContent = playerName;
             playerBadge.classList.remove('hidden');
+
+            // MEZCLAR PREGUNTAS AL INICIAR CADA PARTIDA
+            QUESTIONS = shuffleArray(originalQuestions);
 
             currentQuestionIndex = 0;
             score = 0;
