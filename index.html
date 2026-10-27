@@ -7,30 +7,31 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Carga del archivo de preguntas externo (Mantenido) -->
+    <!-- Carga del archivo de preguntas externo -->
     <script src="./preguntas.js"></script>
 
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Fredoka & Inter (Estilo Canva Didáctico) -->
+    
+    <!-- Google Fonts: Cherry Bomb One & Comic Neue (Estilo KG Primary Penmanship) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Comic+Neue:wght@400;700&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        fredoka: ['Fredoka', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
+                        cherry: ['"Cherry Bomb One"', 'cursive', 'sans-serif'],
+                        penmanship: ['"Comic Neue"', '"Fredoka"', 'cursive', 'sans-serif'],
                     },
                     colors: {
-                        canvaPurple: '#7D2AE8',
-                        canvaPink: '#FF5757',
+                        canvaPurple: '#6D5DFc',
+                        canvaDarkPurple: '#3B2E7E',
                         canvaYellow: '#FFBD59',
-                        canvaGreen: '#00C2CB',
-                        canvaDark: '#1E1E2F',
+                        canvaOrange: '#FF7B39',
+                        canvaCyan: '#00C2CB'
                     }
                 }
             }
@@ -38,121 +39,125 @@
     </script>
     <style>
         body {
-            font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(135deg, #7D2AE8 0%, #00C2CB 100%);
+            font-family: 'Comic Neue', 'Fredoka', cursive, sans-serif;
+            background-image: url('./fondo2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             min-height: 100vh;
         }
-        .pop-card {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+        /* Círculo morado para destacar la pregunta */
+        .circle-badge-question {
+            background: radial-gradient(circle, #6D5DFc 0%, #4A3E9D 100%);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
         }
+
         .timer-bar {
             transition: width 0.1s linear;
         }
+
         @keyframes bounce-short {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+            50% { transform: translateY(-6px); }
         }
         .bounce-active {
-            animation: bounce-short 0.4s ease infinite;
+            animation: bounce-short 2.5s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="flex items-center justify-center p-4 min-h-screen text-slate-800">
+<body class="flex items-center justify-center p-4 min-h-screen text-slate-800 relative">
 
-    <!-- Configuración opcional de Google Apps Script URL -->
+    <!-- Configuración de Google Apps Script URL -->
     <script>
         const GOOGLE_SHEETS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVvqXAkNDfrGswlpa6NxfIeLHS4xOoUCnrxIgIX7k0GPdzYxZvLr-q5DpOjnlNQfA/exec";
     </script>
 
-    <!-- Contenedor Principal Estilo Canva -->
-    <main class="w-full max-w-xl bg-white rounded-3xl pop-card overflow-hidden border-4 border-white relative min-h-[550px] flex flex-col justify-between p-6 sm:p-8">
+    <!-- Contenedor Principal Transparente (Alineado exactamente dentro del pergamino de fondo2.jpg) -->
+    <main class="w-full max-w-xl relative min-h-[520px] flex flex-col justify-between p-4 sm:p-8 my-auto">
 
-        <!-- Header Superior / Logo o Título de la Materia -->
-        <header class="flex justify-between items-center pb-4 border-b-2 border-slate-100">
-            <div class="flex items-center gap-2">
-                <div class="bg-canvaPurple text-white p-2 rounded-xl text-lg font-bold">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <span class="text-xl font-bold text-canvaPurple tracking-wide">Desafío Interactivo</span>
-            </div>
-            <div id="playerBadge" class="hidden bg-slate-100 px-3 py-1 rounded-full text-sm font-semibold text-slate-600">
-                <i class="fa-solid fa-user text-canvaPurple mr-1"></i> <span id="displayName">-</span>
+        <!-- Header Superior -->
+        <header class="flex justify-between items-center pb-3 border-b-2 border-dashed border-canvaDarkPurple/20">
+            <span class="text-3xl sm:text-4xl font-cherry tracking-wider text-canvaDarkPurple drop-shadow-sm">
+                True or False
+            </span>
+            <div id="playerBadge" class="hidden bg-white/90 px-3 py-1 rounded-full text-sm font-bold text-canvaDarkPurple border border-canvaPurple/30 shadow-sm">
+                <i class="fa-solid fa-rocket text-canvaOrange mr-1"></i> <span id="displayName">-</span>
             </div>
         </header>
 
         <!-- ==================== PANTALLA 1: BIENVENIDA ==================== -->
-        <section id="screenWelcome" class="flex flex-col items-center text-center my-auto py-6 space-y-6">
-            <div class="w-24 h-24 bg-canvaYellow/20 text-canvaYellow rounded-full flex items-center justify-center text-5xl mb-2 bounce-active">
-                <i class="fa-solid fa-bolt text-amber-500"></i>
+        <section id="screenWelcome" class="flex flex-col items-center text-center my-auto py-2 space-y-5">
+            <div class="w-20 h-20 circle-badge-question text-white rounded-full flex items-center justify-center text-4xl shadow-md bounce-active">
+                🚀
             </div>
             <div>
-                <h1 class="text-3xl sm:text-4xl font-bold text-slate-800 leading-tight mb-2">¿Cuánto sabes del tema?</h1>
-                <p class="text-slate-500 font-sans text-sm sm:text-base">Responde Verdadero o Falso antes de que el tiempo se agote. ¡Demuestra tu rapidez!</p>
+                <h1 class="text-3xl sm:text-4xl font-cherry text-canvaDarkPurple tracking-wide mb-1">¡Desafío Espacial!</h1>
+                <p class="text-slate-800 font-penmanship text-lg sm:text-xl font-bold">Responde Verdadero o Falso antes de que se agote el tiempo.</p>
             </div>
 
-            <form id="startForm" onsubmit="startGame(event)" class="w-full space-y-4 pt-4">
+            <form id="startForm" class="w-full max-w-md space-y-4 pt-1">
                 <div class="text-left">
-                    <label class="block text-sm font-bold text-slate-700 mb-1 ml-1" for="username">Tu Nombre o Apodo:</label>
+                    <label class="block text-sm font-bold text-canvaDarkPurple mb-1 ml-1 font-penmanship text-base" for="username">Tu Nombre o Apodo:</label>
                     <input 
                         type="text" 
                         id="username" 
                         required
                         maxlength="20"
                         placeholder="Escribe tu nombre aquí..." 
-                        class="w-full px-5 py-4 rounded-2xl border-2 border-slate-200 focus:border-canvaPurple focus:outline-none text-lg font-sans font-medium transition"
+                        class="w-full px-5 py-3 rounded-2xl bg-white/90 border-2 border-canvaPurple/50 focus:border-canvaPurple focus:outline-none text-lg font-penmanship font-bold text-slate-800 shadow-inner transition"
                     />
                 </div>
                 <button 
-                    type="submit" 
-                    class="w-full py-4 bg-canvaPurple hover:bg-purple-700 text-white font-bold text-xl rounded-2xl shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-play"></i> ¡Comenzar Juego!
+                    type="button" 
+                    onclick="startGame(event)"
+                    class="w-full py-3.5 bg-canvaOrange hover:bg-orange-600 text-white font-cherry tracking-wide text-2xl rounded-2xl shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3 border-b-4 border-amber-800">
+                    <i class="fa-solid fa-play text-lg"></i> ¡Comenzar Misión!
                 </button>
             </form>
         </section>
 
         <!-- ==================== PANTALLA 2: JUEGO ==================== -->
-        <section id="screenGame" class="hidden flex-col justify-between my-auto py-4 space-y-6">
-            <!-- Info Barra Superior: Pregunta Nro + Puntos + Temporizador -->
-            <div class="space-y-3">
-                <div class="flex justify-between items-center font-bold text-sm text-slate-500">
+        <section id="screenGame" class="hidden flex-col justify-between my-auto py-2 space-y-4">
+            <div class="space-y-1.5">
+                <div class="flex justify-between items-center font-bold text-sm text-canvaDarkPurple font-penmanship text-base">
                     <span id="questionCounter">Pregunta 1 de 5</span>
-                    <span class="text-amber-500 flex items-center gap-1">
-                        <i class="fa-solid fa-star"></i> <span id="currentScore">0</span> pts
+                    <span class="text-amber-700 flex items-center gap-1 font-bold">
+                        <i class="fa-solid fa-star text-amber-500"></i> <span id="currentScore">0</span> pts
                     </span>
                 </div>
                 
                 <!-- Barra de tiempo visual -->
-                <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-200">
-                    <div id="timerBar" class="bg-canvaGreen h-full rounded-full timer-bar w-full"></div>
+                <div class="w-full bg-white/90 rounded-full h-3.5 overflow-hidden p-0.5 border border-canvaPurple/30 shadow-inner">
+                    <div id="timerBar" class="bg-canvaCyan h-full rounded-full timer-bar w-full"></div>
                 </div>
-                <div class="text-right text-xs text-slate-400 font-sans font-semibold">
-                    Tiempo restante: <span id="timerText" class="text-slate-700 font-bold">12</span>s
+                <div class="text-right text-xs text-slate-700 font-penmanship font-bold">
+                    Tiempo restante: <span id="timerText" class="text-canvaDarkPurple font-extrabold text-sm">12</span>s
                 </div>
             </div>
 
-            <!-- Tarjeta de Pregunta (Estilo Diapositiva Canva) -->
-            <div class="bg-purple-50 border-2 border-canvaPurple/20 rounded-2xl p-6 sm:p-8 text-center min-h-[160px] flex items-center justify-center relative shadow-sm">
-                <p id="questionText" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+            <!-- Círculo / Tarjeta Morada Central de Pregunta -->
+            <div class="circle-badge-question rounded-3xl p-6 sm:p-8 text-center min-h-[160px] flex items-center justify-center relative shadow-md border-2 border-white/20">
+                <p id="questionText" class="text-xl sm:text-2xl font-penmanship font-bold text-white leading-snug drop-shadow-md">
                     Cargando pregunta...
                 </p>
             </div>
 
             <!-- Mensaje Feedback de Acierto / Error -->
-            <div id="feedbackBox" class="hidden text-center py-2 px-4 rounded-xl font-bold text-sm animate-fade-in">
-                <!-- Dinámico desde JS -->
-            </div>
+            <div id="feedbackBox" class="hidden text-center py-2 px-4 rounded-xl font-bold text-sm font-penmanship text-base"></div>
 
-            <!-- Botones de Acción Verdadero / Falso -->
-            <div class="grid grid-cols-2 gap-4 pt-2">
+            <!-- Botones Verdadero / Falso -->
+            <div class="grid grid-cols-2 gap-4 pt-1">
                 <button 
                     onclick="answerQuestion(true)" 
-                    class="py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-emerald-700">
+                    class="py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-cherry tracking-wider text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-emerald-800">
                     <i class="fa-solid fa-circle-check text-2xl"></i>
                     <span>Verdadero</span>
                 </button>
                 <button 
                     onclick="answerQuestion(false)" 
-                    class="py-5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-rose-700">
+                    class="py-4 bg-rose-500 hover:bg-rose-600 text-white font-cherry tracking-wider text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-rose-800">
                     <i class="fa-solid fa-circle-xmark text-2xl"></i>
                     <span>Falso</span>
                 </button>
@@ -160,66 +165,61 @@
         </section>
 
         <!-- ==================== PANTALLA 3: RESULTADOS & RANKING ==================== -->
-        <section id="screenResults" class="hidden flex-col items-center text-center my-auto py-4 space-y-6">
-            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-4xl bounce-active">
-                <i class="fa-solid fa-trophy"></i>
+        <section id="screenResults" class="hidden flex-col items-center text-center my-auto py-2 space-y-3">
+            <div class="w-16 h-16 bg-canvaYellow text-amber-800 rounded-full flex items-center justify-center text-3xl shadow-md bounce-active">
+                🏆
             </div>
 
             <div>
-                <h2 class="text-3xl font-bold text-slate-800 mb-1">¡Felicitaciones!</h2>
-                <p class="text-slate-500 font-sans text-sm">Has completado la actividad</p>
+                <h2 class="text-3xl font-cherry text-canvaDarkPurple mb-0">¡Misión Cumplida!</h2>
+                <p class="text-slate-800 font-penmanship text-base font-bold">Has completado la actividad con éxito</p>
             </div>
 
-            <!-- Resumen de Estadísticas -->
-            <div class="grid grid-cols-2 gap-4 w-full">
-                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
-                    <span class="block text-xs text-slate-500 font-sans uppercase font-bold tracking-wider">Puntaje Final</span>
-                    <span id="finalScore" class="text-3xl font-bold text-canvaPurple">0</span>
-                    <span class="text-xs text-slate-400 block font-sans">puntos</span>
+            <div class="grid grid-cols-2 gap-3 w-full">
+                <div class="bg-white/90 p-2.5 rounded-2xl border border-canvaPurple/30 shadow-sm">
+                    <span class="block text-xs text-slate-500 font-penmanship uppercase font-bold">Puntaje Final</span>
+                    <span id="finalScore" class="text-2xl font-cherry text-canvaPurple">0</span>
+                    <span class="text-xs text-slate-500 block font-penmanship font-bold">puntos</span>
                 </div>
-                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
-                    <span class="block text-xs text-slate-500 font-sans uppercase font-bold tracking-wider">Tiempo Total</span>
-                    <span id="finalTime" class="text-3xl font-bold text-amber-500">0s</span>
-                    <span class="text-xs text-slate-400 block font-sans">segundos</span>
+                <div class="bg-white/90 p-2.5 rounded-2xl border border-canvaPurple/30 shadow-sm">
+                    <span class="block text-xs text-slate-500 font-penmanship uppercase font-bold">Tiempo Total</span>
+                    <span id="finalTime" class="text-2xl font-cherry text-amber-600">0s</span>
+                    <span class="text-xs text-slate-500 block font-penmanship font-bold">segundos</span>
                 </div>
             </div>
 
-            <!-- Tabla de Ranking / Podio -->
-            <div class="w-full text-left bg-slate-50 rounded-2xl p-4 border border-slate-200">
-                <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-200">
-                    <h3 class="font-bold text-slate-700 text-base flex items-center gap-2">
-                        <i class="fa-solid fa-list-ol text-canvaPurple"></i> Tabla de Posiciones
+            <div class="w-full text-left bg-white/90 rounded-2xl p-3 border border-canvaPurple/30 shadow-sm">
+                <div class="flex justify-between items-center mb-1.5 pb-1 border-b border-slate-200">
+                    <h3 class="font-cherry text-canvaDarkPurple text-base flex items-center gap-2">
+                        <i class="fa-solid fa-ranking-star text-canvaOrange"></i> Tabla de Posiciones
                     </h3>
-                    <span id="syncStatus" class="text-xs text-slate-400 font-sans">Actualizado</span>
+                    <span id="syncStatus" class="text-xs text-slate-500 font-penmanship font-bold">Actualizado</span>
                 </div>
 
-                <div class="max-h-48 overflow-y-auto pr-1">
-                    <table class="w-full text-sm font-sans">
+                <div class="max-h-36 overflow-y-auto pr-1">
+                    <table class="w-full text-sm font-penmanship font-bold">
                         <thead>
                             <tr class="text-left text-xs text-slate-400 border-b border-slate-200">
-                                <th class="pb-2">#</th>
-                                <th class="pb-2">Nombre</th>
-                                <th class="pb-2 text-right">Pts</th>
-                                <th class="pb-2 text-right">Tiempo</th>
+                                <th class="pb-1">#</th>
+                                <th class="pb-1">Nombre</th>
+                                <th class="pb-1 text-right">Pts</th>
+                                <th class="pb-1 text-right">Tiempo</th>
                             </tr>
                         </thead>
-                        <tbody id="rankingTableBody">
-                            <!-- Filas inyectadas por JS -->
-                        </tbody>
+                        <tbody id="rankingTableBody"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Botones de reinicio -->
             <button 
                 onclick="resetGame()" 
-                class="w-full py-4 bg-canvaPurple hover:bg-purple-700 text-white font-bold text-lg rounded-2xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                class="w-full py-3 bg-canvaPurple hover:bg-purple-700 text-white font-cherry tracking-wide text-xl rounded-2xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2 border-b-4 border-indigo-900">
                 <i class="fa-solid fa-rotate-right"></i> Jugar de Nuevo
             </button>
         </section>
 
-        <!-- Footer / Créditos -->
-        <footer class="pt-4 border-t border-slate-100 text-center text-xs text-slate-400 font-sans">
+        <!-- Footer -->
+        <footer class="pt-2 border-t border-dashed border-canvaDarkPurple/20 text-center text-xs text-canvaDarkPurple font-penmanship font-bold">
             Actividad Didáctica Interactiva • Creado para el aula
         </footer>
 
@@ -227,18 +227,14 @@
 
     <!-- SCRIPT DE LÓGICA DEL JUEGO -->
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE LAS PREGUNTAS (Toma de preguntas.js o usa fallback)
-        // ==========================================
         const QUESTIONS = (typeof preguntasJuego !== 'undefined' && Array.isArray(preguntasJuego))
             ? preguntasJuego
             : [
-                { question: "El sol es la estrella más cercana a la Tierra.", answer: true, timeLimit: 12 },
-                { question: "Los delfines son peces que respiran por agallas.", answer: false, timeLimit: 12 },
-                { question: "El agua hierva a 100 grados Celsius a nivel del mar.", answer: true, timeLimit: 10 }
+                { pregunta: "El sol es la estrella más cercana a la Tierra.", respuesta: true, timeLimit: 12 },
+                { pregunta: "Los delfines son peces que respiran por agallas.", respuesta: false, timeLimit: 12 },
+                { pregunta: "El agua hierve a 100 grados Celsius a nivel del mar.", respuesta: true, timeLimit: 10 }
             ];
 
-        // Estado global del juego
         let currentQuestionIndex = 0;
         let score = 0;
         let playerName = "";
@@ -252,7 +248,6 @@
             { nombre: "Sofía P.", puntaje: 300, tiempo: 45 }
         ];
 
-        // Referencias al DOM
         const screenWelcome = document.getElementById('screenWelcome');
         const screenGame = document.getElementById('screenGame');
         const screenResults = document.getElementById('screenResults');
@@ -266,7 +261,6 @@
         const feedbackBox = document.getElementById('feedbackBox');
         const rankingTableBody = document.getElementById('rankingTableBody');
 
-        // Función para Iniciar el Juego
         function startGame(e) {
             if (e && e.preventDefault) e.preventDefault();
             const inputName = document.getElementById('username').value.trim();
@@ -288,7 +282,6 @@
             loadQuestion();
         }
 
-        // Cargar pregunta actual
         function loadQuestion() {
             feedbackBox.classList.add('hidden');
             const q = QUESTIONS[currentQuestionIndex];
@@ -300,7 +293,6 @@
             currentScore.textContent = score;
             questionText.textContent = qText;
 
-            // Iniciar temporizador
             timeLeft = limit;
             updateTimerUI(timeLeft, limit);
 
@@ -321,7 +313,6 @@
             }, 100);
         }
 
-        // Actualizar barra e indicador numérico de tiempo
         function updateTimerUI(current, max) {
             timerText.textContent = Math.max(0, Math.ceil(current));
             const percentage = Math.max(0, (current / max) * 100);
@@ -332,11 +323,10 @@
             } else if (percentage < 60) {
                 timerBar.className = "bg-amber-400 h-full rounded-full timer-bar w-full";
             } else {
-                timerBar.className = "bg-canvaGreen h-full rounded-full timer-bar w-full";
+                timerBar.className = "bg-canvaCyan h-full rounded-full timer-bar w-full";
             }
         }
 
-        // Manejar respuesta seleccionada
         function answerQuestion(userChoice) {
             clearInterval(timerInterval);
             const q = QUESTIONS[currentQuestionIndex];
@@ -350,7 +340,6 @@
             showFeedback(isCorrect);
 
             if (isCorrect) {
-                // Cálculo de puntaje: Base 100 + bonus por tiempo
                 const timeBonus = Math.round((parseFloat(timerText.textContent) / limit) * 50);
                 score += 100 + timeBonus;
                 currentScore.textContent = score;
@@ -363,7 +352,6 @@
             }, 1200);
         }
 
-        // Si se agota el tiempo
         function handleTimeOut() {
             const limit = QUESTIONS[currentQuestionIndex].timeLimit || 12;
             totalTimeSpent += limit;
@@ -377,12 +365,12 @@
         }
 
         function showFeedback(isCorrect, customMsg = null) {
-            feedbackBox.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700', 'bg-rose-100', 'text-rose-700');
+            feedbackBox.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
             if (isCorrect) {
-                feedbackBox.classList.add('bg-emerald-100', 'text-emerald-700');
+                feedbackBox.classList.add('bg-emerald-100', 'text-emerald-800');
                 feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Correcto! +Puntos por rapidez`;
             } else {
-                feedbackBox.classList.add('bg-rose-100', 'text-rose-700');
+                feedbackBox.classList.add('bg-rose-100', 'text-rose-800');
                 feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ${customMsg || "¡Incorrecto!"}`;
             }
         }
@@ -401,7 +389,6 @@
             }
         }
 
-        // Finalizar juego y mostrar resultados
         function finishGame() {
             screenGame.classList.add('hidden');
             screenResults.classList.remove('hidden');
@@ -415,7 +402,6 @@
             saveScore(playerName, score, totalDuration);
         }
 
-        // Enviar resultado a Google Sheets o Fallback Local
         function saveScore(nombre, puntaje, tiempo) {
             const userEntry = { nombre, puntaje, tiempo, current: true };
 
@@ -438,12 +424,11 @@
                     renderRankingLocal(userEntry);
                 });
             } else {
-                document.getElementById('syncStatus').textContent = "Modo Demo (Sin URL Sheets)";
+                document.getElementById('syncStatus').textContent = "Modo Demo";
                 renderRankingLocal(userEntry);
             }
         }
 
-        // Cargar ranking desde Google Sheets
         function fetchRanking() {
             fetch(GOOGLE_SHEETS_SCRIPT_URL)
                 .then(res => res.json())
@@ -455,7 +440,6 @@
                 });
         }
 
-        // Renderizar tabla con datos locales de prueba
         function renderRankingLocal(currentUser) {
             let combined = [...mockRanking, currentUser];
             combined.sort((a, b) => b.puntaje - a.puntaje || a.tiempo - b.tiempo);
@@ -468,20 +452,19 @@
                 const isCurrent = item.nombre === playerName;
                 const tr = document.createElement('tr');
                 tr.className = isCurrent 
-                    ? "bg-purple-100 font-bold text-canvaPurple rounded-lg" 
-                    : "border-b border-slate-100 text-slate-600";
+                    ? "bg-purple-200/80 font-bold text-canvaDarkPurple rounded-lg" 
+                    : "border-b border-slate-200 text-slate-700";
                 
                 tr.innerHTML = `
-                    <td class="py-2.5 px-1">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}</td>
-                    <td class="py-2.5 px-1 truncate max-w-[120px]">${item.nombre} ${isCurrent ? '(Tú)' : ''}</td>
-                    <td class="py-2.5 px-1 text-right font-semibold">${item.puntaje}</td>
-                    <td class="py-2.5 px-1 text-right text-slate-400 text-xs">${item.tiempo}s</td>
+                    <td class="py-2 px-1">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}</td>
+                    <td class="py-2 px-1 truncate max-w-[120px]">${item.nombre} ${isCurrent ? '(Tú)' : ''}</td>
+                    <td class="py-2 px-1 text-right font-bold">${item.puntaje}</td>
+                    <td class="py-2 px-1 text-right text-slate-500 text-xs">${item.tiempo}s</td>
                 `;
                 rankingTableBody.appendChild(tr);
             });
         }
 
-        // Reiniciar aplicación
         function resetGame() {
             screenResults.classList.add('hidden');
             screenWelcome.classList.remove('hidden');
