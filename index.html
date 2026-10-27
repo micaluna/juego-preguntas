@@ -6,8 +6,10 @@
     <title>Desafío Interactivo - Verdadero o Falso</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Carga del archivo de preguntas externo -->
+    
+    <!-- Carga del archivo de preguntas externo (Mantenido) -->
     <script src="./preguntas.js"></script>
+
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts: Fredoka & Inter (Estilo Canva Didáctico) -->
@@ -57,7 +59,7 @@
 </head>
 <body class="flex items-center justify-center p-4 min-h-screen text-slate-800">
 
-    <!-- Configuración de Google Apps Script URL -->
+    <!-- Configuración opcional de Google Apps Script URL -->
     <script>
         const GOOGLE_SHEETS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVvqXAkNDfrGswlpa6NxfIeLHS4xOoUCnrxIgIX7k0GPdzYxZvLr-q5DpOjnlNQfA/exec";
     </script>
@@ -65,7 +67,7 @@
     <!-- Contenedor Principal Estilo Canva -->
     <main class="w-full max-w-xl bg-white rounded-3xl pop-card overflow-hidden border-4 border-white relative min-h-[550px] flex flex-col justify-between p-6 sm:p-8">
 
-        <!-- Header Superior -->
+        <!-- Header Superior / Logo o Título de la Materia -->
         <header class="flex justify-between items-center pb-4 border-b-2 border-slate-100">
             <div class="flex items-center gap-2">
                 <div class="bg-canvaPurple text-white p-2 rounded-xl text-lg font-bold">
@@ -88,7 +90,7 @@
                 <p class="text-slate-500 font-sans text-sm sm:text-base">Responde Verdadero o Falso antes de que el tiempo se agote. ¡Demuestra tu rapidez!</p>
             </div>
 
-     <form id="startForm" class="w-full space-y-4 pt-4">
+            <form id="startForm" onsubmit="startGame(event)" class="w-full space-y-4 pt-4">
                 <div class="text-left">
                     <label class="block text-sm font-bold text-slate-700 mb-1 ml-1" for="username">Tu Nombre o Apodo:</label>
                     <input 
@@ -101,8 +103,7 @@
                     />
                 </div>
                 <button 
-                    type="button" 
-                    onclick="startGame(event)"
+                    type="submit" 
                     class="w-full py-4 bg-canvaPurple hover:bg-purple-700 text-white font-bold text-xl rounded-2xl shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3">
                     <i class="fa-solid fa-play"></i> ¡Comenzar Juego!
                 </button>
@@ -111,8 +112,382 @@
 
         <!-- ==================== PANTALLA 2: JUEGO ==================== -->
         <section id="screenGame" class="hidden flex-col justify-between my-auto py-4 space-y-6">
+            <!-- Info Barra Superior: Pregunta Nro + Puntos + Temporizador -->
             <div class="space-y-3">
                 <div class="flex justify-between items-center font-bold text-sm text-slate-500">
                     <span id="questionCounter">Pregunta 1 de 5</span>
                     <span class="text-amber-500 flex items-center gap-1">
-                        <i class="fa-solid fa
+                        <i class="fa-solid fa-star"></i> <span id="currentScore">0</span> pts
+                    </span>
+                </div>
+                
+                <!-- Barra de tiempo visual -->
+                <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-200">
+                    <div id="timerBar" class="bg-canvaGreen h-full rounded-full timer-bar w-full"></div>
+                </div>
+                <div class="text-right text-xs text-slate-400 font-sans font-semibold">
+                    Tiempo restante: <span id="timerText" class="text-slate-700 font-bold">12</span>s
+                </div>
+            </div>
+
+            <!-- Tarjeta de Pregunta (Estilo Diapositiva Canva) -->
+            <div class="bg-purple-50 border-2 border-canvaPurple/20 rounded-2xl p-6 sm:p-8 text-center min-h-[160px] flex items-center justify-center relative shadow-sm">
+                <p id="questionText" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+                    Cargando pregunta...
+                </p>
+            </div>
+
+            <!-- Mensaje Feedback de Acierto / Error -->
+            <div id="feedbackBox" class="hidden text-center py-2 px-4 rounded-xl font-bold text-sm animate-fade-in">
+                <!-- Dinámico desde JS -->
+            </div>
+
+            <!-- Botones de Acción Verdadero / Falso -->
+            <div class="grid grid-cols-2 gap-4 pt-2">
+                <button 
+                    onclick="answerQuestion(true)" 
+                    class="py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-emerald-700">
+                    <i class="fa-solid fa-circle-check text-2xl"></i>
+                    <span>Verdadero</span>
+                </button>
+                <button 
+                    onclick="answerQuestion(false)" 
+                    class="py-5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xl rounded-2xl shadow-md transition transform active:scale-95 flex flex-col items-center justify-center gap-1 border-b-4 border-rose-700">
+                    <i class="fa-solid fa-circle-xmark text-2xl"></i>
+                    <span>Falso</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== PANTALLA 3: RESULTADOS & RANKING ==================== -->
+        <section id="screenResults" class="hidden flex-col items-center text-center my-auto py-4 space-y-6">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-4xl bounce-active">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div>
+                <h2 class="text-3xl font-bold text-slate-800 mb-1">¡Felicitaciones!</h2>
+                <p class="text-slate-500 font-sans text-sm">Has completado la actividad</p>
+            </div>
+
+            <!-- Resumen de Estadísticas -->
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+                    <span class="block text-xs text-slate-500 font-sans uppercase font-bold tracking-wider">Puntaje Final</span>
+                    <span id="finalScore" class="text-3xl font-bold text-canvaPurple">0</span>
+                    <span class="text-xs text-slate-400 block font-sans">puntos</span>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                    <span class="block text-xs text-slate-500 font-sans uppercase font-bold tracking-wider">Tiempo Total</span>
+                    <span id="finalTime" class="text-3xl font-bold text-amber-500">0s</span>
+                    <span class="text-xs text-slate-400 block font-sans">segundos</span>
+                </div>
+            </div>
+
+            <!-- Tabla de Ranking / Podio -->
+            <div class="w-full text-left bg-slate-50 rounded-2xl p-4 border border-slate-200">
+                <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-200">
+                    <h3 class="font-bold text-slate-700 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-list-ol text-canvaPurple"></i> Tabla de Posiciones
+                    </h3>
+                    <span id="syncStatus" class="text-xs text-slate-400 font-sans">Actualizado</span>
+                </div>
+
+                <div class="max-h-48 overflow-y-auto pr-1">
+                    <table class="w-full text-sm font-sans">
+                        <thead>
+                            <tr class="text-left text-xs text-slate-400 border-b border-slate-200">
+                                <th class="pb-2">#</th>
+                                <th class="pb-2">Nombre</th>
+                                <th class="pb-2 text-right">Pts</th>
+                                <th class="pb-2 text-right">Tiempo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingTableBody">
+                            <!-- Filas inyectadas por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Botones de reinicio -->
+            <button 
+                onclick="resetGame()" 
+                class="w-full py-4 bg-canvaPurple hover:bg-purple-700 text-white font-bold text-lg rounded-2xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> Jugar de Nuevo
+            </button>
+        </section>
+
+        <!-- Footer / Créditos -->
+        <footer class="pt-4 border-t border-slate-100 text-center text-xs text-slate-400 font-sans">
+            Actividad Didáctica Interactiva • Creado para el aula
+        </footer>
+
+    </main>
+
+    <!-- SCRIPT DE LÓGICA DEL JUEGO -->
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN DE LAS PREGUNTAS (Toma de preguntas.js o usa fallback)
+        // ==========================================
+        const QUESTIONS = (typeof preguntasJuego !== 'undefined' && Array.isArray(preguntasJuego))
+            ? preguntasJuego
+            : [
+                { question: "El sol es la estrella más cercana a la Tierra.", answer: true, timeLimit: 12 },
+                { question: "Los delfines son peces que respiran por agallas.", answer: false, timeLimit: 12 },
+                { question: "El agua hierva a 100 grados Celsius a nivel del mar.", answer: true, timeLimit: 10 }
+            ];
+
+        // Estado global del juego
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "";
+        let timerInterval = null;
+        let timeLeft = 0;
+        let totalTimeSpent = 0;
+        let gameStartTime = 0;
+        let mockRanking = [
+            { nombre: "Lucía M.", puntaje: 450, tiempo: 32 },
+            { nombre: "Carlos R.", puntaje: 380, tiempo: 40 },
+            { nombre: "Sofía P.", puntaje: 300, tiempo: 45 }
+        ];
+
+        // Referencias al DOM
+        const screenWelcome = document.getElementById('screenWelcome');
+        const screenGame = document.getElementById('screenGame');
+        const screenResults = document.getElementById('screenResults');
+        const playerBadge = document.getElementById('playerBadge');
+        const displayName = document.getElementById('displayName');
+        const questionCounter = document.getElementById('questionCounter');
+        const currentScore = document.getElementById('currentScore');
+        const questionText = document.getElementById('questionText');
+        const timerBar = document.getElementById('timerBar');
+        const timerText = document.getElementById('timerText');
+        const feedbackBox = document.getElementById('feedbackBox');
+        const rankingTableBody = document.getElementById('rankingTableBody');
+
+        // Función para Iniciar el Juego
+        function startGame(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const inputName = document.getElementById('username').value.trim();
+            if (!inputName) return;
+
+            playerName = inputName;
+            displayName.textContent = playerName;
+            playerBadge.classList.remove('hidden');
+
+            currentQuestionIndex = 0;
+            score = 0;
+            totalTimeSpent = 0;
+            gameStartTime = Date.now();
+
+            screenWelcome.classList.add('hidden');
+            screenGame.classList.remove('hidden');
+            screenGame.classList.add('flex');
+
+            loadQuestion();
+        }
+
+        // Cargar pregunta actual
+        function loadQuestion() {
+            feedbackBox.classList.add('hidden');
+            const q = QUESTIONS[currentQuestionIndex];
+            
+            const qText = q.pregunta || q.question || "";
+            const limit = q.timeLimit || 12;
+
+            questionCounter.textContent = `Pregunta ${currentQuestionIndex + 1} de ${QUESTIONS.length}`;
+            currentScore.textContent = score;
+            questionText.textContent = qText;
+
+            // Iniciar temporizador
+            timeLeft = limit;
+            updateTimerUI(timeLeft, limit);
+
+            clearInterval(timerInterval);
+            const startTime = Date.now();
+            
+            timerInterval = setInterval(() => {
+                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                const remaining = limit - elapsedSeconds;
+
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    updateTimerUI(0, limit);
+                    handleTimeOut();
+                } else {
+                    updateTimerUI(remaining, limit);
+                }
+            }, 100);
+        }
+
+        // Actualizar barra e indicador numérico de tiempo
+        function updateTimerUI(current, max) {
+            timerText.textContent = Math.max(0, Math.ceil(current));
+            const percentage = Math.max(0, (current / max) * 100);
+            timerBar.style.width = `${percentage}%`;
+
+            if (percentage < 30) {
+                timerBar.className = "bg-rose-500 h-full rounded-full timer-bar w-full";
+            } else if (percentage < 60) {
+                timerBar.className = "bg-amber-400 h-full rounded-full timer-bar w-full";
+            } else {
+                timerBar.className = "bg-canvaGreen h-full rounded-full timer-bar w-full";
+            }
+        }
+
+        // Manejar respuesta seleccionada
+        function answerQuestion(userChoice) {
+            clearInterval(timerInterval);
+            const q = QUESTIONS[currentQuestionIndex];
+            const limit = q.timeLimit || 12;
+            const correctAnswer = (q.respuesta !== undefined) ? q.respuesta : q.answer;
+
+            const timeTaken = limit - Math.max(0, parseFloat(timerText.textContent));
+            totalTimeSpent += Math.max(1, timeTaken);
+
+            const isCorrect = userChoice === correctAnswer;
+            showFeedback(isCorrect);
+
+            if (isCorrect) {
+                // Cálculo de puntaje: Base 100 + bonus por tiempo
+                const timeBonus = Math.round((parseFloat(timerText.textContent) / limit) * 50);
+                score += 100 + timeBonus;
+                currentScore.textContent = score;
+            }
+
+            disableButtons(true);
+            setTimeout(() => {
+                disableButtons(false);
+                nextQuestion();
+            }, 1200);
+        }
+
+        // Si se agota el tiempo
+        function handleTimeOut() {
+            const limit = QUESTIONS[currentQuestionIndex].timeLimit || 12;
+            totalTimeSpent += limit;
+            showFeedback(false, "¡Tiempo agotado!");
+            disableButtons(true);
+
+            setTimeout(() => {
+                disableButtons(false);
+                nextQuestion();
+            }, 1200);
+        }
+
+        function showFeedback(isCorrect, customMsg = null) {
+            feedbackBox.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700', 'bg-rose-100', 'text-rose-700');
+            if (isCorrect) {
+                feedbackBox.classList.add('bg-emerald-100', 'text-emerald-700');
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Correcto! +Puntos por rapidez`;
+            } else {
+                feedbackBox.classList.add('bg-rose-100', 'text-rose-700');
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ${customMsg || "¡Incorrecto!"}`;
+            }
+        }
+
+        function disableButtons(disabled) {
+            const buttons = screenGame.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = disabled);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < QUESTIONS.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        // Finalizar juego y mostrar resultados
+        function finishGame() {
+            screenGame.classList.add('hidden');
+            screenResults.classList.remove('hidden');
+            screenResults.classList.add('flex');
+
+            const totalDuration = Math.round((Date.now() - gameStartTime) / 1000);
+
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalTime').textContent = `${totalDuration}`;
+
+            saveScore(playerName, score, totalDuration);
+        }
+
+        // Enviar resultado a Google Sheets o Fallback Local
+        function saveScore(nombre, puntaje, tiempo) {
+            const userEntry = { nombre, puntaje, tiempo, current: true };
+
+            if (GOOGLE_SHEETS_SCRIPT_URL && GOOGLE_SHEETS_SCRIPT_URL.startsWith("http")) {
+                document.getElementById('syncStatus').textContent = "Guardando...";
+                
+                fetch(GOOGLE_SHEETS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, puntaje, tiempo })
+                })
+                .then(() => {
+                    document.getElementById('syncStatus').textContent = "Sincronizado";
+                    fetchRanking();
+                })
+                .catch(err => {
+                    console.error("Error enviando a Sheets:", err);
+                    document.getElementById('syncStatus').textContent = "Modo Local";
+                    renderRankingLocal(userEntry);
+                });
+            } else {
+                document.getElementById('syncStatus').textContent = "Modo Demo (Sin URL Sheets)";
+                renderRankingLocal(userEntry);
+            }
+        }
+
+        // Cargar ranking desde Google Sheets
+        function fetchRanking() {
+            fetch(GOOGLE_SHEETS_SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    renderRankingTable(data);
+                })
+                .catch(() => {
+                    renderRankingLocal({ nombre: playerName, puntaje: score, tiempo: totalTimeSpent, current: true });
+                });
+        }
+
+        // Renderizar tabla con datos locales de prueba
+        function renderRankingLocal(currentUser) {
+            let combined = [...mockRanking, currentUser];
+            combined.sort((a, b) => b.puntaje - a.puntaje || a.tiempo - b.tiempo);
+            renderRankingTable(combined);
+        }
+
+        function renderRankingTable(list) {
+            rankingTableBody.innerHTML = "";
+            list.slice(0, 10).forEach((item, idx) => {
+                const isCurrent = item.nombre === playerName;
+                const tr = document.createElement('tr');
+                tr.className = isCurrent 
+                    ? "bg-purple-100 font-bold text-canvaPurple rounded-lg" 
+                    : "border-b border-slate-100 text-slate-600";
+                
+                tr.innerHTML = `
+                    <td class="py-2.5 px-1">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}</td>
+                    <td class="py-2.5 px-1 truncate max-w-[120px]">${item.nombre} ${isCurrent ? '(Tú)' : ''}</td>
+                    <td class="py-2.5 px-1 text-right font-semibold">${item.puntaje}</td>
+                    <td class="py-2.5 px-1 text-right text-slate-400 text-xs">${item.tiempo}s</td>
+                `;
+                rankingTableBody.appendChild(tr);
+            });
+        }
+
+        // Reiniciar aplicación
+        function resetGame() {
+            screenResults.classList.add('hidden');
+            screenWelcome.classList.remove('hidden');
+            document.getElementById('username').value = "";
+            playerBadge.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
